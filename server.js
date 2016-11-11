@@ -84,9 +84,10 @@ app.post('/api/users/language/:id', function(req, res, next){
 		if (elem.id.toString() === req.params.id){
 			elem.language = req.body.language;
 			updated = elem;
+			res.status(200).json(updated)
 		}
 	})
-	res.status(200).json(updated)
+	res.status(404).json("not found")
 })
 
 // 8
@@ -96,9 +97,10 @@ app.post('/api/users/forums/:id', function(req, res, next){
 		if (elem.id.toString() === req.params.id){
 			elem.favorites.push(req.body.add);
 			updated = elem;
+			res.status(200).json(updated)
 		}
 	})
-	res.status(200).json(updated)
+	res.status(404).json("not found")
 })
 
 // 9
@@ -112,9 +114,10 @@ app.delete('/api/users/forums/:id', function(req, res, next){
 				}
 			}
 			updated = elem;
+			res.status(200).json(updated)
 		}
 	})
-	res.status(200).json(updated)
+	res.status(404).json("not found")
 })
 
 // 10
@@ -122,9 +125,10 @@ app.delete('/api/users/:id', function(req, res, next){
 	for (var i = users.length-1; i >= 0; i--){
 		if (users[i].id.toString() === req.params.id){
 			users.splice(i,1);
+			res.status(200).json(users);
 		}
 	}
-	res.status(200).json(users);
+	res.status(404).json("user not found");
 })
 
 // 12
@@ -136,9 +140,10 @@ app.put('/api/users/:id', function(req, res, next){
 				elem[key] = req.body[key];
 			}
 			updated = elem;
+			res.status(200).json(updated)
 		}
 	})
-	res.status(200).json(updated)
+	res.status(404).json("not found")
 })
 
 
