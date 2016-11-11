@@ -1,9 +1,11 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 var users = require('./users.json');
 
 var app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 
 /////////////////////////////////////////
@@ -79,12 +81,10 @@ app.post('/api/users/admin', function(req, res, next){
 
 // 7
 app.post('/api/users/language/:id', function(req, res, next){
-	var updated;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			elem.language = req.body.language;
-			updated = elem;
-			res.status(200).json(updated)
+			res.status(200).json(elem)
 		}
 	})
 	res.status(404).json("not found")
@@ -92,12 +92,10 @@ app.post('/api/users/language/:id', function(req, res, next){
 
 // 8
 app.post('/api/users/forums/:id', function(req, res, next){
-	var updated;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			elem.favorites.push(req.body.add);
-			updated = elem;
-			res.status(200).json(updated)
+			res.status(200).json(elem)
 		}
 	})
 	res.status(404).json("not found")
@@ -105,7 +103,6 @@ app.post('/api/users/forums/:id', function(req, res, next){
 
 // 9
 app.delete('/api/users/forums/:id', function(req, res, next){
-	var updated;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			for (var i = elem.favorites.length-1; i >= 0; i--){
@@ -113,8 +110,7 @@ app.delete('/api/users/forums/:id', function(req, res, next){
 					elem.favorites.splice(i, 1);
 				}
 			}
-			updated = elem;
-			res.status(200).json(updated)
+			res.status(200).json(elem)
 		}
 	})
 	res.status(404).json("not found")
@@ -133,14 +129,12 @@ app.delete('/api/users/:id', function(req, res, next){
 
 // 12
 app.put('/api/users/:id', function(req, res, next){
-	var updated;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			for (var key in req.body){
 				elem[key] = req.body[key];
 			}
-			updated = elem;
-			res.status(200).json(updated)
+			res.status(200).json(elem)
 		}
 	})
 	res.status(404).json("not found")
