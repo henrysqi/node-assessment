@@ -50,7 +50,7 @@ app.get('/api/users', function(req, res, next){
 
 })
 
-// 3, 4 switched from position searching, @@@@@@@@@ had to json(true) for #10 wtf??
+// 3, 4 switched from position searching for #12, @@@@@@@@@ had to json(true) for #10 json("not found") didnt work. 
 app.get('/api/users/:id', function(req, res, next){
 	if (req.params.id === "admin" || req.params.id === "moderator" || req.params.id === "user"){
 		var result = users.filter(function(elem){
@@ -106,7 +106,7 @@ app.post('/api/users/language/:id', function(req, res, next){
 	}
 })
 
-// 8   @@@@ added conditional if favorites is array
+// 8   @@@@ added conditional if favorites is array, fakeuser has favorites as string
 app.post('/api/users/forums/:id', function(req, res, next){
 	var found = false;
 		users.forEach(function(elem){
