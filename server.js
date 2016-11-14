@@ -31,14 +31,14 @@ app.get('/api/users', function(req, res, next){
 		})
 		res.status(200).json(result);
 	} 
-	// @@@@@@@@ had to account for lower cased stanton
+	// @@@@@@@@ had to account for lower cased penn
 	else if (req.query.state){
 		var result = users.filter(function(elem){
 			return elem.state.toLowerCase() === req.query.state.toLowerCase();
 		})
 		res.status(200).json(result);
 	} 
-	// @@@@@@@@ had to account for lower cased stanton
+	// @@@@@@@@ had to account for lower cased gender
 	else if (req.query.gender){
 		var result = users.filter(function(elem){
 			return elem.gender.toLowerCase() === req.query.gender.toLowerCase();
