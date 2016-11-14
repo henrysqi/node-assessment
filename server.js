@@ -18,44 +18,56 @@ app.get('/api/users', function(req, res, next){
 		})
 		res.status(200).json(result);
 	} 
-	if (req.query.age){
+	else if (req.query.age){
 		var result = users.filter(function(elem){
 			return elem.age === Number(req.query.age);
 		})
 		res.status(200).json(result);
 	} 
-	if (req.query.city){
+	// @@@@@@@@ had to account for lower cased stanton
+	else if (req.query.city){
 		var result = users.filter(function(elem){
-			return elem.city === req.query.city;
+			return elem.city.toLowerCase() === req.query.city.toLowerCase();
 		})
 		res.status(200).json(result);
 	} 
-	if (req.query.state){
+	// @@@@@@@@ had to account for lower cased stanton
+	else if (req.query.state){
 		var result = users.filter(function(elem){
-			return elem.state === req.query.state;
+			return elem.state.toLowerCase() === req.query.state.toLowerCase();
 		})
 		res.status(200).json(result);
 	} 
-	if (req.query.gender){
+	// @@@@@@@@ had to account for lower cased stanton
+	else if (req.query.gender){
 		var result = users.filter(function(elem){
-			return elem.gender === req.query.gender;
+			return elem.gender.toLowerCase() === req.query.gender.toLowerCase();
 		})
 		res.status(200).json(result);
-	} 
-	
-	res.status(200).json(users);
+	} else {
+		res.status(200).json(users);
+	}
 
 })
 
-// 3, 4
+// 3, 4 switched from position searching, @@@@@@@@@ had to json(true) for #10 wtf??
 app.get('/api/users/:id', function(req, res, next){
 	if (req.params.id === "admin" || req.params.id === "moderator" || req.params.id === "user"){
 		var result = users.filter(function(elem){
 			return elem.type === req.params.id;
 		})
 		res.status(200).json(result);
-	} else if (Number(req.params.id) > 0 && Number(req.params.id) <= users.length){
-		res.status(200).json(users[req.params.id - 1])
+	} else if (!isNaN(req.params.id)){
+		var found = false;
+		users.forEach(function(elem){
+			if (elem.id.toString() === req.params.id){
+				res.status(200).json(elem);
+				found = true;
+			}
+		})
+		if (!found){
+			res.status(404).json(true);
+		}
 	} else {
 		res.status(404).json("not found");
 	}
@@ -81,28 +93,44 @@ app.post('/api/users/admin', function(req, res, next){
 
 // 7
 app.post('/api/users/language/:id', function(req, res, next){
+	var found = false;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			elem.language = req.body.language;
 			res.status(200).json(elem)
+			found = true;
 		}
 	})
-	res.status(404).json("not found")
+	if (!found) {
+		res.status(404).json("not found")
+	}
 })
 
-// 8
+// 8   @@@@ added conditional if favorites is array
 app.post('/api/users/forums/:id', function(req, res, next){
-	users.forEach(function(elem){
-		if (elem.id.toString() === req.params.id){
-			elem.favorites.push(req.body.add);
-			res.status(200).json(elem)
-		}
-	})
-	res.status(404).json("not found")
+	var found = false;
+		users.forEach(function(elem){
+			if (elem.id.toString() === req.params.id){
+				if (Array.isArray(elem.favorites)){
+					elem.favorites.push(req.body.add);
+					res.status(200).json(elem);
+					var found = true;
+				} else {
+					elem.favorites = [elem.favorites]
+					elem.favorites.push(req.body.add);
+					res.status(200).json(elem);
+					found = true;
+				}
+			}
+		})
+	if (!found) {
+		res.status(404).json("not found")
+	}
 })
 
 // 9
 app.delete('/api/users/forums/:id', function(req, res, next){
+	var found = false;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			for (var i = elem.favorites.length-1; i >= 0; i--){
@@ -111,33 +139,45 @@ app.delete('/api/users/forums/:id', function(req, res, next){
 				}
 			}
 			res.status(200).json(elem)
+			found = true;
 		}
 	})
-	res.status(404).json("not found")
+	if (!found) {
+		res.status(404).json("not found")		
+	}
 })
 
 // 10
 app.delete('/api/users/:id', function(req, res, next){
+	var found = false;
 	for (var i = users.length-1; i >= 0; i--){
 		if (users[i].id.toString() === req.params.id){
 			users.splice(i,1);
 			res.status(200).json(users);
+			found=true;
 		}
 	}
-	res.status(404).json("user not found");
+	if (!found){
+		res.status(404).json("user not found");
+	}
 })
 
-// 12
+// 12 @@@@@ prob was in get /api/users/:id, not put
 app.put('/api/users/:id', function(req, res, next){
+	var found = false;
 	users.forEach(function(elem){
 		if (elem.id.toString() === req.params.id){
 			for (var key in req.body){
 				elem[key] = req.body[key];
 			}
-			res.status(200).json(elem)
+			res.status(200).json(elem)	
+			found = true;
 		}
 	})
-	res.status(404).json("not found")
+	
+	if (!found) {
+		res.status(404).json("not found")
+	}
 })
 
 
